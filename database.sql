@@ -1,6 +1,6 @@
 CREATE TYPE role AS ENUM ('admin', 'writer');
 
-CREATE TABLE employee
+CREATE TABLE user
 (
   id             uuid NOT NULL UNIQUE,
   name       	   VARCHAR(255) NOT NULL ,
