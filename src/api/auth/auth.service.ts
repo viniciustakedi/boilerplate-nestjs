@@ -50,7 +50,7 @@ export class AuthService {
         throw new NotFoundException('Usuário ou senha invalídos!');
       }
 
-      const userValidate = await this.validateUser(user.email, user.password);
+      const userValidate = await this.validateUser(user.login, user.password);
 
       if (!userValidate) {
         throw new NotFoundException('Usuário ou senha invalídos!');

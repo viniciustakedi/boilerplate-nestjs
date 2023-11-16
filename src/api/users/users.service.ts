@@ -33,7 +33,7 @@ export class UsersService {
       const isNewUserAdmin = roles.find((role) => role === 'admin');
 
       if (isNewUserAdmin) {
-        if (!isUserAdmin(auth)) {
+        if (!auth || !isUserAdmin(auth)) {
           throw new HttpException(
             'Only admin can create admin users!',
             HttpStatus.UNAUTHORIZED,
