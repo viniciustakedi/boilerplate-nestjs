@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsUUID,
   IsEnum,
+  IsArray,
 } from 'class-validator';
 import { ERole } from 'src/models/roles';
 
@@ -32,9 +33,10 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-  @IsEnum(ERole, { message: 'Role/permissão não permitida' })
-  @IsOptional()
-  role: ERole;
+  @IsArray()
+  @IsEnum(ERole, { each: true, message: 'Role/permissão não permitida' })
+  @IsNotEmpty()
+  roles: ERole[];
 }
 
 export class AddUserRoleDto {

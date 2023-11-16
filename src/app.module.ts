@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './api/auth/auth.service';
-import { UsersModule } from './api/modules-exporter';
+import { AuthModule, UsersModule } from './api/modules-exporter';
 
 @Module({
   imports: [
@@ -12,6 +12,7 @@ import { UsersModule } from './api/modules-exporter';
       isGlobal: true,
     }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, JwtService],

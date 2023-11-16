@@ -1,4 +1,4 @@
-CREATE TYPE role AS ENUM ('admin', 'writer');
+CREATE TYPE user_role AS ENUM ('admin', 'writer');
 
 CREATE TABLE user
 (
@@ -8,7 +8,7 @@ CREATE TABLE user
   phone			     VARCHAR(11) UNIQUE,
   password       VARCHAR(255) NOT NULL,
   code           VARCHAR(6) NOT NULL UNIQUE,
-  role           role NOT NULL DEFAULT 'writer',
+  roles          user_role NOT NULL DEFAULT 'writer',
   created_at     TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at     TIMESTAMPTZ,
   is_deleted     BOOLEAN NOT NULL DEFAULT 'f',

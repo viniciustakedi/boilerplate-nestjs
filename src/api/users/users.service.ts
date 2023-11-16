@@ -18,6 +18,7 @@ import {
 } from 'src/utils';
 import { DataSourceType } from 'src/models/database';
 import { ERepository } from 'src/models/repositories';
+import { isUserAdmin, parseJwt } from 'src/utils/functions';
 
 @Injectable()
 export class UsersService {
@@ -46,8 +47,19 @@ export class UsersService {
   }
 
   @HttpCode(HttpStatus.CREATED)
-  async createUser(payload: CreateUserDto) {
+  async createUser(payload: CreateUserDto, auth: string) {
     try {
+      const isNewUserAdmin = payload.roles.find((role) => role === 'admin');
+
+      if (isNewUserAdmin) {
+        if (!isUserAdmin(auth)) {
+          throw new HttpException(
+            'Only admin can create admin users!',
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+      }
+
       let code = generateCode();
       let codeVerify = false;
 
@@ -78,7 +90,7 @@ export class UsersService {
       const total = await this.UserRepository.count();
       const users = await this.UserRepository.find({
         where: { isDeleted: false },
-        select: ['id', 'name', 'email', 'phone', 'code', 'role'],
+        select: ['id', 'name', 'email', 'phone', 'code', 'roles'],
       });
 
       if (!users) {
@@ -104,7 +116,7 @@ export class UsersService {
     try {
       const user = await this.UserRepository.findOne({
         where: { id, isDeleted: false },
-        select: ['id', 'name', 'email', 'phone', 'code', 'role'],
+        select: ['id', 'name', 'email', 'phone', 'code', 'roles'],
       });
       if (!user) {
         throw new HttpException(
@@ -113,15 +125,26 @@ export class UsersService {
         );
       }
 
-      return createResponse(user, 1, "Usuário encontrado.", HttpStatus.OK);
+      return createResponse(user, 1, 'Usuário encontrado.', HttpStatus.OK);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
   }
 
   @HttpCode(HttpStatus.OK)
-  async update(id: string, payload: UpdateUserDto): Promise<any> {
+  async update(id: string, payload: UpdateUserDto, auth: string): Promise<any> {
     try {
+      const isNewUserAdmin = payload.roles.find((role) => role === 'admin');
+
+      if (isNewUserAdmin) {
+        if (!isUserAdmin(auth)) {
+          throw new HttpException(
+            'Only admin can create admin users!',
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+      }
+
       const user = await this.UserRepository.findOne({
         where: { id, isDeleted: false },
       });
@@ -173,10 +196,7 @@ export class UsersService {
       this.UserRepository.merge(user, { ...isDeleted });
       this.UserRepository.save(user);
 
-      return createTextResponse(
-        'Usuário deletado com sucesso.',
-        HttpStatus.OK,
-      );
+      return createTextResponse('Usuário deletado com sucesso.', HttpStatus.OK);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }

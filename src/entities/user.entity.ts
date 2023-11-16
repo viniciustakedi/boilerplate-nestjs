@@ -50,11 +50,11 @@ export class User extends BaseEntity {
   })
   public code: string;
 
-  @Column('text', {
+  @Column('simple-array', {
     nullable: false,
-    name: 'role',
+    name: 'roles',
   })
-  public role: ERole;
+  public roles: string[];
 
   @CreateDateColumn({
     name: 'created_at',

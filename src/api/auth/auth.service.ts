@@ -1,8 +1,8 @@
 import * as bcrypt from 'bcrypt';
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { timeout } from 'src/utils';
+import { createResponse, timeout } from 'src/utils';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +27,12 @@ export class AuthService {
   }
 
   async loginUser(user: any) {
-    const payload = { sub: user.id, role: user.role, iss: process.env.JWT_ISSUER };
-    return { access_token: this.jwtService.sign(payload) };
+    const payload = { sub: user.id, roles: user.roles, iss: process.env.JWT_ISSUER };
+    return createResponse(
+      this.jwtService.sign(payload),
+      1,
+      'Login efetuado com sucesso!',
+      HttpStatus.CREATED,
+    );
   }
 }

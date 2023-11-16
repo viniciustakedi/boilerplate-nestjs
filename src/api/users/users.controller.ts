@@ -27,12 +27,13 @@ import { isSameUser } from 'src/utils';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(ERole.admin)
   @UsePipes(new ValidationPipe())
   @Post()
-  create(@Body() payload: CreateUserDto) {
-    return this.usersService.createUser(payload);
+  create(
+    @Headers('Authorization') auth: string,
+    @Body() payload: CreateUserDto,
+  ) {
+    return this.usersService.createUser(payload, auth);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -45,9 +46,15 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(ERole.admin, ERole.writer)
   @Get(':id')
-  async findOne(@Headers('Authorization') auth: string, @Param() params: ParamsDto) {
+  async findOne(
+    @Headers('Authorization') auth: string,
+    @Param() params: ParamsDto,
+  ) {
     if (!isSameUser(params.id, auth)) {
-      throw new HttpException('Você tentou alterar um outro usuário!', HttpStatus.FORBIDDEN);
+      throw new HttpException(
+        'Você tentou alterar um outro usuário!',
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     return this.usersService.findOne(params.id);
@@ -63,10 +70,13 @@ export class UsersController {
     @Body() payload: UpdateUserDto,
   ) {
     if (!isSameUser(params.id, auth)) {
-      return new HttpException('Você tentou alterar outro usuário!', HttpStatus.FORBIDDEN);
+      return new HttpException(
+        'Você tentou alterar outro usuário!',
+        HttpStatus.FORBIDDEN,
+      );
     }
 
-    return this.usersService.update(params.id, payload);
+    return this.usersService.update(params.id, payload, auth);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

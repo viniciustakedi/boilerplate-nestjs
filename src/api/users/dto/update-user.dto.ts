@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsEmail,
   IsEnum,
   IsOptional,
@@ -30,7 +31,8 @@ export class UpdateUserDto {
   @IsOptional()
   password: string;
 
-  @IsEnum(ERole, { message: 'Role/permissão não permitida' })
+  @IsArray()
+  @IsEnum(ERole, { each: true, message: 'Role/permissão não permitida' })
   @IsOptional()
-  role: ERole;
+  roles: ERole[];
 }
