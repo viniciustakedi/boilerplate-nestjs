@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import e from 'express';
 import { Document } from 'mongoose';
 import { HydratedDocument } from 'mongoose';
 import { ERole } from 'src/models/roles';
